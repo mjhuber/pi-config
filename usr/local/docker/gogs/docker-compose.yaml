@@ -1,0 +1,27 @@
+version: '2'
+
+services:
+  gogs:
+    image: hypriot/rpi-gogs-raspbian
+    volumes:
+      - /usr/local/docker/gogs/data:/data
+    restart: always
+    networks:
+      - frontend
+    expose:
+      - 3000
+    ports:
+      - '8022:22'
+      - '3000:3000'
+    labels:
+      - "traefik.frontend.rule=Host:gogs.huberm.mywire.org"
+      - "traefik.backend=gogs"
+      - "traefik.docker.network=frontend"
+      - "traefik.enable=true"
+      - "traefik.port=3000"
+      - "traefik.default.protocol=http"
+
+networks:
+  frontend:
+    external:
+      name: frontend

@@ -1,0 +1,21 @@
+[Unit]
+Description=%i service with docker compose
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+
+WorkingDirectory=/usr/local/docker/%i
+
+#remove our old containers
+ExecStartPre=/usr/bin/docker-compose down -v
+ExecStartPre=/usr/bin/docker system prune
+
+
+ExecStart=/usr/bin/docker-compose up
+
+ExecStop=/usr/bin/docker-compose down -v
+
+[Install]
+WantedBy=multi-user.target

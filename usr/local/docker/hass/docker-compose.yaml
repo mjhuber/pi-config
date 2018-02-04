@@ -1,0 +1,46 @@
+version: '2'
+
+services:
+   db:
+     image: hypriot/rpi-mysql:5.5
+     volumes:
+        - /usr/local/docker/hass//mysql:/var/lib/mysql
+     restart: always
+     networks:
+       - backend
+     expose:
+       - "3306"
+     environment:
+       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PW
+       MYSQL_DATABASE: 'homeassistant'
+       MYSQL_USER: $MYSQL_HASS_USER
+       MYSQL_PASSWORD: $MYSQL_HASS_PW
+
+   homeassistant:
+     depends_on:
+       - db
+     image: homeassistant/raspberrypi2-homeassistant
+     container_name: hass
+     expose:
+       - "8123"
+     networks:
+       - frontend
+       - backend
+     volumes:
+       - /usr/local/docker/hass/home-assistant:/config
+     restart: always
+     labels:
+       - "traefik.frontend.rule=Host:homeassistant.huberm.mywire.org"
+       - "traefik.backend=homeassistant"
+       - "traefik.docker.network=frontend"
+       - "traefik.enable=true"
+       - "traefik.port=8123"
+       - "traefik.default.protocol=http"
+
+networks:
+  frontend:
+    external:
+      name: frontend
+  backend:
+    external:
+      name: backend

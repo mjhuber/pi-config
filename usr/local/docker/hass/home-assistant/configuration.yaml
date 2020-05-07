@@ -1,17 +1,21 @@
 homeassistant:
   # Name of the location where Home Assistant is running
-  name: Home
-  # Location required to calculate the time the sun rises and sets
+  name: Bliss Pt
   latitude: 39.956280
   longitude: -86.350968
-  # Impacts weather/sunrise data (altitude above sea level in meters)
   elevation: 283
-  # metric for Metric, imperial for Imperial
   unit_system: imperial
-  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   time_zone: America/Indiana/Indianapolis
   # Customization file
   customize: !include customize.yaml
+
+
+
+
+
+
+
+
 
 # Show links to resources in log and frontend
 #introduction:
@@ -26,7 +30,7 @@ http:
   # Secrets are defined in the file secrets.yaml
   # api_password: !secret http_password
   # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
-  base_url: homeassistant.huberm.mywire.org
+  base_url: hass.huberm.mywire.org
   api_password: !secret http_password
 
 # Checks for available updates
@@ -56,7 +60,7 @@ map:
 # Track the sun
 sun:
 
-# Weather prediction
+
 sensor:
   - platform: yr
 
@@ -73,20 +77,58 @@ recorder:
   purge_keep_days: 5
   db_url: !secret my_db
 
+# abode
 abode:
   username: !secret abode_username
   password: !secret abode_password
   name: Abode Alarm System
 
+# hue
 hue:
   bridges:
     - host: 192.168.1.184
       allow_unreachable: true
 
+# skybell
 skybell:
   username: !secret skybell_username
   password: !secret skybell_password
 
+binary_sensor:
+  - platform: skybell
+    monitored_conditions:
+      - button
+      - motion
+
+camera:
+  - platform: skybell
+    monitored_conditions:
+    - avatar
+    - activity
+    activity_name: "Last Activity"
+
+light:
+  - platform: skybell
+
+sensor:
+  - platform: skybell
+  monitored_conditions:
+    - chime_level
+
+switch:
+  - platform: skybell
+  monitored_conditions:
+    - do_not_disturb
+    - motion_sensor
+
+
+# nest
 nest:
   client_id: !secret nest_clientid
   client_secret: !secret nest_secret
+
+# myQ
+cover:
+  - platform: myq
+    username: !secret myq_username
+    password: !secret myq_password

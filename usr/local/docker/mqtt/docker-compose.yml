@@ -1,0 +1,18 @@
+version: '2'
+
+services:
+  mqtt:
+    container_name: MQTT
+    restart: unless-stopped
+    image: eclipse-mosquitto:latest
+    volumes:
+      - /usr/local/docker/mqtt/config:/mosquitto/config
+      - /usr/local/docker/mqtt/log:/mosquitto/log
+      - /usr/local/docker/mqtt/data:/mosquitto/data
+     # - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "1883:1883"
+      - "9001:9001"   
+    environment:
+      - TZ=America/New_York
+
